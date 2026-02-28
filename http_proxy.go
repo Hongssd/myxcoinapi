@@ -66,8 +66,8 @@ func isUseProxy() bool {
 
 func init() {
 	c := cron.New(cron.WithSeconds())
-	//每10秒权重清零，状态恢复
-	_, err := c.AddFunc("*/10 * * * * *", func() {
+	//每3秒权重清零，状态恢复
+	_, err := c.AddFunc("*/3 * * * * *", func() {
 		for _, proxy := range proxyList {
 			proxy.Weight.restore()
 		}
@@ -177,6 +177,11 @@ func RequestWithHeader(urlStr string, reqBody []byte, method string, headerMap m
 	log.Debug(string(data))
 	log.Debug(resp.Header)
 	if isUseProxy() {
+		if resp.StatusCode == http.StatusForbidden {
+			currentProxyWeight.RemainWeight = 0
+			currentProxyWeight.IsLimited = true
+			return data, errors.New("proxy ip is limited")
+		}
 		//回填权重
 		if resp.Header.Get("X-Gate-RateLimit-Requests-Remain") != "" {
 			remainWeight, err := strconv.Atoi(resp.Header.Get("X-Gate-RateLimit-Requests-Remain"))
