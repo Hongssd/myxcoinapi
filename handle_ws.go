@@ -40,28 +40,44 @@ func handleWsTicker24hr(data []byte) (*WsTicker24hr, error) {
 	return wsTicker24hr, nil
 }
 
+type Klines struct {
+	Symbol             string `json:"symbol"`             // 交易对
+	Period             string `json:"period"`             // 周期
+	OpenTime           string `json:"openTime"`           // 开盘时间
+	CloseTime          string `json:"closeTime"`          // 收盘时间
+	OpenPrice          string `json:"openPrice"`          // 开盘价
+	ClosePrice         string `json:"closePrice"`         // 收盘价
+	HighPrice          string `json:"highPrice"`          // 最高价
+	LowPrice           string `json:"lowPrice"`           // 最低价
+	Volume             string `json:"volume"`             // 成交量
+	QuoteVolume        string `json:"quoteVolume"`        // 成交额
+	Count              string `json:"count"`              // 成交笔数
+	PriceChange        string `json:"priceChange"`        // 涨跌额
+	PriceChangePercent string `json:"priceChangePercent"` // 涨跌幅
+}
+
 type WsKline struct {
 	WsSubscribeArg
-	Kline
+	Klines
 }
 
-type WsKlineMiddle struct {
+type WsKlinesMiddle struct {
 	WsSubscribeArg
-	Data []Kline `json:"data"`
+	Data []Klines `json:"data"`
 }
 
-func handleWsKline(data []byte) (*[]WsKline, error) {
-	wsKlineMiddle := &WsKlineMiddle{}
-	err := json.Unmarshal(data, wsKlineMiddle)
+func handleWsKlines(data []byte) (*[]WsKline, error) {
+	wsKlinesMiddle := &WsKlinesMiddle{}
+	err := json.Unmarshal(data, wsKlinesMiddle)
 	if err != nil {
 		return nil, err
 	}
 
 	wsKlines := []WsKline{}
-	for _, kline := range wsKlineMiddle.Data {
+	for _, kline := range wsKlinesMiddle.Data {
 		wsKlines = append(wsKlines, WsKline{
-			WsSubscribeArg: wsKlineMiddle.WsSubscribeArg,
-			Kline:          kline,
+			WsSubscribeArg: wsKlinesMiddle.WsSubscribeArg,
+			Klines:         kline,
 		})
 	}
 	return &wsKlines, nil

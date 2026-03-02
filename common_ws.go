@@ -725,7 +725,7 @@ func (ws *WsStreamClient) handleResult(resultChan chan []byte, errChan chan erro
 
 				// kline订阅结果处理
 				if strings.Contains(string(data), "kline#") {
-					k, err := handleWsKline(data)
+					k, err := handleWsKlines(data)
 					if len(*k) == 0 {
 						log.Warnf("kline is empty, skip")
 						continue
