@@ -17,11 +17,13 @@ type Ticker24hr struct {
 type WsTicker24hr struct {
 	WsSubscribeArg
 	Ticker24hr
+	Ts int64 `json:"ts"`
 }
 
 type WsTicker24hrMiddle struct {
 	WsSubscribeArg
 	Data []Ticker24hr `json:"data"`
+	Ts   int64        `json:"ts"`
 }
 
 func handleWsTicker24hr(data []byte) (*WsTicker24hr, error) {
@@ -35,6 +37,7 @@ func handleWsTicker24hr(data []byte) (*WsTicker24hr, error) {
 	wsTicker24hr := &WsTicker24hr{
 		WsSubscribeArg: wsTicker24hrMiddle.WsSubscribeArg,
 		Ticker24hr:     ticker,
+		Ts:             wsTicker24hrMiddle.Ts,
 	}
 
 	return wsTicker24hr, nil
@@ -59,11 +62,13 @@ type Klines struct {
 type WsKline struct {
 	WsSubscribeArg
 	Klines
+	Ts int64 `json:"ts"`
 }
 
 type WsKlinesMiddle struct {
 	WsSubscribeArg
 	Data []Klines `json:"data"`
+	Ts   int64    `json:"ts"`
 }
 
 func handleWsKlines(data []byte) (*[]WsKline, error) {
@@ -78,6 +83,7 @@ func handleWsKlines(data []byte) (*[]WsKline, error) {
 		wsKlines = append(wsKlines, WsKline{
 			WsSubscribeArg: wsKlinesMiddle.WsSubscribeArg,
 			Klines:         kline,
+			Ts:             wsKlinesMiddle.Ts,
 		})
 	}
 	return &wsKlines, nil
@@ -231,11 +237,13 @@ type WsOrderbook struct {
 	Bids         []Books `json:"bids"`
 	PreUpdateId  string  `json:"preUpdateId"`
 	LastUpdateId string  `json:"lastUpdateId"`
+	Ts           int64   `json:"ts"`
 }
 
 type WsOrderbookMiddle struct {
 	WsSubscribeArg
 	Data []OrderBook `json:"data"`
+	Ts   int64       `json:"ts"`
 }
 
 func handleWsOrderbook(data []byte) (*[]WsOrderbook, error) {
@@ -268,6 +276,7 @@ func handleWsOrderbook(data []byte) (*[]WsOrderbook, error) {
 			Bids:           bids,
 			PreUpdateId:    orderbook.PreUpdateId,
 			LastUpdateId:   orderbook.LastUpdateId,
+			Ts:             wsOrderbookMiddle.Ts,
 		})
 	}
 	return &wsOrderbooks, nil
@@ -285,11 +294,13 @@ type Trade struct {
 type WsTrade struct {
 	WsSubscribeArg
 	Trade
+	Ts int64 `json:"ts"`
 }
 
 type WsTradeMiddle struct {
 	WsSubscribeArg
 	Data []Trade `json:"data"`
+	Ts   int64   `json:"ts"`
 }
 
 func handleWsTrade(data []byte) (*[]WsTrade, error) {
@@ -304,6 +315,7 @@ func handleWsTrade(data []byte) (*[]WsTrade, error) {
 		wsTrades = append(wsTrades, WsTrade{
 			WsSubscribeArg: wsTradeMiddle.WsSubscribeArg,
 			Trade:          trade,
+			Ts:             wsTradeMiddle.Ts,
 		})
 	}
 	return &wsTrades, nil

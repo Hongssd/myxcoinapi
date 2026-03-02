@@ -711,7 +711,11 @@ func (ws *WsStreamClient) handleResult(resultChan chan []byte, errChan chan erro
 				if strings.Contains(string(data), "ticker24hr") {
 					t, err := handleWsTicker24hr(data)
 					arg := t.WsSubscribeArg
-					keyData, _ := json.Marshal(arg)
+					keyData, _ := json.Marshal(WsSubscribeArg{
+						Stream:       arg.Stream,
+						BusinessType: arg.BusinessType,
+						Symbol:       arg.Symbol,
+					})
 					// log.Warnf("keyData: %s", string(keyData))
 					if sub, ok := ws.ticker24hrSubMap.Load(string(keyData)); ok {
 						if err != nil {
@@ -731,7 +735,11 @@ func (ws *WsStreamClient) handleResult(resultChan chan []byte, errChan chan erro
 						continue
 					}
 					arg := (*k)[0].WsSubscribeArg
-					keyData, _ := json.Marshal(arg)
+					keyData, _ := json.Marshal(WsSubscribeArg{
+						Stream:       arg.Stream,
+						BusinessType: arg.BusinessType,
+						Symbol:       arg.Symbol,
+					})
 					// log.Warnf("keyData: %s", string(keyData))
 					if sub, ok := ws.klineSubMap.Load(string(keyData)); ok {
 						if err != nil {
@@ -753,7 +761,11 @@ func (ws *WsStreamClient) handleResult(resultChan chan []byte, errChan chan erro
 						continue
 					}
 					arg := (*d)[0].WsSubscribeArg
-					keyData, _ := json.Marshal(arg)
+					keyData, _ := json.Marshal(WsSubscribeArg{
+						Stream:       arg.Stream,
+						BusinessType: arg.BusinessType,
+						Symbol:       arg.Symbol,
+					})
 					if sub, ok := ws.depthSubMap.Load(string(keyData)); ok {
 						if err != nil {
 							sub.errChan <- err
@@ -774,7 +786,11 @@ func (ws *WsStreamClient) handleResult(resultChan chan []byte, errChan chan erro
 						continue
 					}
 					arg := (*d)[0].WsSubscribeArg
-					keyData, _ := json.Marshal(arg)
+					keyData, _ := json.Marshal(WsSubscribeArg{
+						Stream:       arg.Stream,
+						BusinessType: arg.BusinessType,
+						Symbol:       arg.Symbol,
+					})
 					if sub, ok := ws.depthLevelsSubMap.Load(string(keyData)); ok {
 						if err != nil {
 							sub.errChan <- err
@@ -795,7 +811,11 @@ func (ws *WsStreamClient) handleResult(resultChan chan []byte, errChan chan erro
 						continue
 					}
 					arg := (*o)[0].WsSubscribeArg
-					keyData, _ := json.Marshal(arg)
+					keyData, _ := json.Marshal(WsSubscribeArg{
+						Stream:       arg.Stream,
+						BusinessType: arg.BusinessType,
+						Symbol:       arg.Symbol,
+					})
 					if sub, ok := ws.orderbookSubMap.Load(string(keyData)); ok {
 						if err != nil {
 							sub.errChan <- err
@@ -817,13 +837,22 @@ func (ws *WsStreamClient) handleResult(resultChan chan []byte, errChan chan erro
 					}
 
 					arg := (*t)[0].WsSubscribeArg
-					keyData, _ := json.Marshal(arg)
+					keyData, _ := json.Marshal(WsSubscribeArg{
+						Stream:       arg.Stream,
+						BusinessType: arg.BusinessType,
+						Symbol:       arg.Symbol,
+					})
+					// log.Warnf("keyData: %s", string(keyData))
 					if sub, ok := ws.tradeSubMap.Load(string(keyData)); ok {
 						if err != nil {
 							sub.errChan <- err
 							continue
 						}
+						for _, trade := range *t {
+							sub.resultChan <- trade
+						}
 					}
+					continue
 				}
 
 				// position订阅结果处理
@@ -834,7 +863,11 @@ func (ws *WsStreamClient) handleResult(resultChan chan []byte, errChan chan erro
 						continue
 					}
 					arg := (*p)[0].WsSubscribeArg
-					keyData, _ := json.Marshal(arg)
+					keyData, _ := json.Marshal(WsSubscribeArg{
+						Stream:       arg.Stream,
+						BusinessType: arg.BusinessType,
+						Symbol:       arg.Symbol,
+					})
 					if sub, ok := ws.positionSubMap.Load(string(keyData)); ok {
 						if err != nil {
 							sub.errChan <- err
@@ -854,7 +887,11 @@ func (ws *WsStreamClient) handleResult(resultChan chan []byte, errChan chan erro
 						continue
 					}
 					arg := (*o)[0].WsSubscribeArg
-					keyData, _ := json.Marshal(arg)
+					keyData, _ := json.Marshal(WsSubscribeArg{
+						Stream:       arg.Stream,
+						BusinessType: arg.BusinessType,
+						Symbol:       arg.Symbol,
+					})
 					if sub, ok := ws.orderSubMap.Load(string(keyData)); ok {
 						if err != nil {
 							sub.errChan <- err
@@ -874,7 +911,9 @@ func (ws *WsStreamClient) handleResult(resultChan chan []byte, errChan chan erro
 						continue
 					}
 					arg := (*t)[0].WsSubscribeArg
-					keyData, _ := json.Marshal(arg)
+					keyData, _ := json.Marshal(WsSubscribeArg{
+						Stream: arg.Stream,
+					})
 					if sub, ok := ws.tradingAccountSubMap.Load(string(keyData)); ok {
 						if err != nil {
 							sub.errChan <- err

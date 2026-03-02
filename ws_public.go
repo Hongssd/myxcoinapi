@@ -567,6 +567,7 @@ func (ws *PublicWsStreamClient) SubscribeTradeMulti(businessType string, symbols
 	}
 	for _, arg := range args {
 		keyData, _ := json.Marshal(arg)
+		log.Infof("keyData: %s", string(keyData))
 		ws.tradeSubMap.Store(string(keyData), sub)
 	}
 
