@@ -1,6 +1,8 @@
 package myxcoinapi
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type XcoinErrRes struct {
 	Code string `json:"code"`
@@ -19,11 +21,12 @@ type XcoinRestRes[T any] struct {
 
 func handlerCommonRest[T any](data []byte) (*XcoinRestRes[T], error) {
 	res := &XcoinRestRes[T]{}
-	err := json.Unmarshal(data, &res)
-	if err != nil {
+	if err := json.Unmarshal(data, res); err != nil {
+		log.Error(string(data))
 		log.Error("rest返回值获取失败: ", err)
+		return nil, err
 	}
-	return res, err
+	return nil, res.handlerError()
 }
 
 func (err *XcoinErrRes) handlerError() error {

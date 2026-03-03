@@ -207,8 +207,23 @@ func getDepthArg(businessType string, symbol string, interval string) WsSubscrib
 	}
 }
 
+type WsDepthIntervalType string
+
+// interval:数据接收频率，单位毫秒；不填默认为 100ms 频率
+// 取值：100ms，500ms，1000ms
+// 默认：100ms
+const (
+	WS_DEPTH_INTERVAL_TYPE_100  WsDepthIntervalType = "100ms"
+	WS_DEPTH_INTERVAL_TYPE_500  WsDepthIntervalType = "500ms"
+	WS_DEPTH_INTERVAL_TYPE_1000 WsDepthIntervalType = "1000ms"
+)
+
+func (i WsDepthIntervalType) String() string {
+	return string(i)
+}
+
 // 订阅增量深度频道
-func (ws *PublicWsStreamClient) SubscribeDepthMulti(businessType string, intervals []string, symbols ...string) (*Subscription[WsDepth], error) {
+func (ws *PublicWsStreamClient) SubscribeDepthMulti(businessType string, interval WsDepthIntervalType, symbols ...string) (*Subscription[WsDepth], error) {
 	if businessType == "" {
 		return nil, errors.New("businessType is required")
 	}
@@ -218,9 +233,7 @@ func (ws *PublicWsStreamClient) SubscribeDepthMulti(businessType string, interva
 		args = append(args, getDepthArg(businessType, "", ""))
 	} else {
 		for _, s := range symbols {
-			for _, interval := range intervals {
-				args = append(args, getDepthArg(businessType, s, interval))
-			}
+			args = append(args, getDepthArg(businessType, s, interval.String()))
 		}
 	}
 
@@ -255,12 +268,9 @@ func (ws *PublicWsStreamClient) SubscribeDepthMulti(businessType string, interva
 }
 
 // 取消订阅增量深度频道
-func (ws *PublicWsStreamClient) UnsubscribeDepthMulti(businessType string, intervals []string, symbols ...string) error {
+func (ws *PublicWsStreamClient) UnsubscribeDepthMulti(businessType string, interval WsDepthIntervalType, symbols ...string) error {
 	if businessType == "" {
 		return errors.New("businessType is required")
-	}
-	if len(intervals) == 0 {
-		return errors.New("intervals is required")
 	}
 
 	args := []WsSubscribeArg{}
@@ -268,9 +278,7 @@ func (ws *PublicWsStreamClient) UnsubscribeDepthMulti(businessType string, inter
 		args = append(args, getDepthArg(businessType, "", ""))
 	} else {
 		for _, s := range symbols {
-			for _, interval := range intervals {
-				args = append(args, getDepthArg(businessType, s, interval))
-			}
+			args = append(args, getDepthArg(businessType, s, interval.String()))
 		}
 	}
 
@@ -295,21 +303,47 @@ func (ws *PublicWsStreamClient) UnsubscribeDepthMulti(businessType string, inter
 	return nil
 }
 
-func getDepthLevelsArg(businessType string, symbol string, interval string) WsSubscribeArg {
+type WsDepthLevelsType string
+
+// levels 表示几档买卖单信息，可选 5/10/20/30 档，默认 5 档
+const (
+	WS_DEPTH_LEVELS_TYPE_5  WsDepthLevelsType = "5"
+	WS_DEPTH_LEVELS_TYPE_10 WsDepthLevelsType = "10"
+	WS_DEPTH_LEVELS_TYPE_20 WsDepthLevelsType = "20"
+	WS_DEPTH_LEVELS_TYPE_30 WsDepthLevelsType = "30"
+)
+
+func (i WsDepthLevelsType) String() string {
+	return string(i)
+}
+
+type WsDepthLevelsIntervalType string
+
+// 数据接收频率，单位毫秒；不填默认为 100ms 频率 取值：100ms，500ms，1000ms
+const (
+	WS_DEPTH_LEVELS_INTERVAL_TYPE_100  WsDepthLevelsIntervalType = "100ms"
+	WS_DEPTH_LEVELS_INTERVAL_TYPE_500  WsDepthLevelsIntervalType = "500ms"
+	WS_DEPTH_LEVELS_INTERVAL_TYPE_1000 WsDepthLevelsIntervalType = "1000ms"
+)
+
+func (i WsDepthLevelsIntervalType) String() string {
+	return string(i)
+}
+
+func getDepthLevelsArg(businessType string, symbol string, interval WsDepthLevelsIntervalType, levels WsDepthLevelsType, group string) WsSubscribeArg {
 	return WsSubscribeArg{
-		Stream:       fmt.Sprintf("depthlevels#%s", interval),
+		Stream:       fmt.Sprintf("depthlevels#%s", interval.String()),
 		BusinessType: businessType,
 		Symbol:       symbol,
+		Levels:       levels.String(),
+		Group:        group,
 	}
 }
 
 // 订阅有限档深度快照频道
-func (ws *PublicWsStreamClient) SubscribeDepthLevelsMulti(businessType string, intervals []string, symbols []string) (*Subscription[WsDepthLevels], error) {
+func (ws *PublicWsStreamClient) SubscribeDepthLevelsMulti(businessType string, interval WsDepthLevelsIntervalType, levels WsDepthLevelsType, group string, symbols []string) (*Subscription[WsDepthLevels], error) {
 	if businessType == "" {
 		return nil, errors.New("businessType is required")
-	}
-	if len(intervals) == 0 {
-		return nil, errors.New("intervals is required")
 	}
 	if len(symbols) == 0 {
 		return nil, errors.New("symbols is required")
@@ -317,9 +351,7 @@ func (ws *PublicWsStreamClient) SubscribeDepthLevelsMulti(businessType string, i
 
 	args := []WsSubscribeArg{}
 	for _, s := range symbols {
-		for _, interval := range intervals {
-			args = append(args, getDepthLevelsArg(businessType, s, interval))
-		}
+		args = append(args, getDepthLevelsArg(businessType, s, interval, levels, group))
 	}
 
 	doSub, err := subscribe[WsSubscribeResult](&ws.WsStreamClient, args, SUBSCRIBE)
@@ -345,7 +377,11 @@ func (ws *PublicWsStreamClient) SubscribeDepthLevelsMulti(businessType string, i
 		subResultMap: make(map[string]bool),
 	}
 	for _, arg := range args {
-		keyData, _ := json.Marshal(arg)
+		keyData, _ := json.Marshal(WsSubscribeArg{
+			Stream:       arg.Stream,
+			BusinessType: arg.BusinessType,
+			Symbol:       arg.Symbol,
+		})
 		ws.depthLevelsSubMap.Store(string(keyData), sub)
 	}
 
@@ -353,12 +389,9 @@ func (ws *PublicWsStreamClient) SubscribeDepthLevelsMulti(businessType string, i
 }
 
 // 取消订阅有限档深度快照频道
-func (ws *PublicWsStreamClient) UnsubscribeDepthLevelsMulti(businessType string, intervals []string, symbols []string) error {
+func (ws *PublicWsStreamClient) UnsubscribeDepthLevelsMulti(businessType string, interval WsDepthLevelsIntervalType, levels WsDepthLevelsType, group string, symbols []string) error {
 	if businessType == "" {
 		return errors.New("businessType is required")
-	}
-	if len(intervals) == 0 {
-		return errors.New("intervals is required")
 	}
 	if len(symbols) == 0 {
 		return errors.New("symbols is required")
@@ -366,9 +399,7 @@ func (ws *PublicWsStreamClient) UnsubscribeDepthLevelsMulti(businessType string,
 
 	args := []WsSubscribeArg{}
 	for _, s := range symbols {
-		for _, interval := range intervals {
-			args = append(args, getDepthLevelsArg(businessType, s, interval))
-		}
+		args = append(args, getDepthLevelsArg(businessType, s, interval, levels, group))
 	}
 
 	doSub, err := subscribe[WsSubscribeResult](&ws.WsStreamClient, args, UNSUBSCRIBE)
@@ -384,8 +415,16 @@ func (ws *PublicWsStreamClient) UnsubscribeDepthLevelsMulti(businessType string,
 	log.Infof("UnsubscribeDepthLevelsMulti Success: args:%v", doSub.Args)
 
 	for _, arg := range args {
-		doSub.Ws.sendUnSubscribeSuccessToCloseChan([]WsSubscribeArg{arg})
-		keyData, _ := json.Marshal(arg)
+		doSub.Ws.sendUnSubscribeSuccessToCloseChan([]WsSubscribeArg{{
+			Stream:       arg.Stream,
+			BusinessType: arg.BusinessType,
+			Symbol:       arg.Symbol,
+		}})
+		keyData, _ := json.Marshal(WsSubscribeArg{
+			Stream:       arg.Stream,
+			BusinessType: arg.BusinessType,
+			Symbol:       arg.Symbol,
+		})
 		ws.depthLevelsSubMap.Delete(string(keyData))
 	}
 
@@ -528,6 +567,7 @@ func (ws *PublicWsStreamClient) SubscribeTradeMulti(businessType string, symbols
 	}
 	for _, arg := range args {
 		keyData, _ := json.Marshal(arg)
+		log.Infof("keyData: %s", string(keyData))
 		ws.tradeSubMap.Store(string(keyData), sub)
 	}
 

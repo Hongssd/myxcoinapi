@@ -17,11 +17,13 @@ type Ticker24hr struct {
 type WsTicker24hr struct {
 	WsSubscribeArg
 	Ticker24hr
+	Ts int64 `json:"ts"`
 }
 
 type WsTicker24hrMiddle struct {
 	WsSubscribeArg
 	Data []Ticker24hr `json:"data"`
+	Ts   int64        `json:"ts"`
 }
 
 func handleWsTicker24hr(data []byte) (*WsTicker24hr, error) {
@@ -35,33 +37,53 @@ func handleWsTicker24hr(data []byte) (*WsTicker24hr, error) {
 	wsTicker24hr := &WsTicker24hr{
 		WsSubscribeArg: wsTicker24hrMiddle.WsSubscribeArg,
 		Ticker24hr:     ticker,
+		Ts:             wsTicker24hrMiddle.Ts,
 	}
 
 	return wsTicker24hr, nil
 }
 
+type Klines struct {
+	Symbol             string `json:"symbol"`             // 交易对
+	Period             string `json:"period"`             // 周期
+	OpenTime           string `json:"openTime"`           // 开盘时间
+	CloseTime          string `json:"closeTime"`          // 收盘时间
+	OpenPrice          string `json:"openPrice"`          // 开盘价
+	ClosePrice         string `json:"closePrice"`         // 收盘价
+	HighPrice          string `json:"highPrice"`          // 最高价
+	LowPrice           string `json:"lowPrice"`           // 最低价
+	Volume             string `json:"volume"`             // 成交量
+	QuoteVolume        string `json:"quoteVolume"`        // 成交额
+	Count              string `json:"count"`              // 成交笔数
+	PriceChange        string `json:"priceChange"`        // 涨跌额
+	PriceChangePercent string `json:"priceChangePercent"` // 涨跌幅
+}
+
 type WsKline struct {
 	WsSubscribeArg
-	Kline
+	Klines
+	Ts int64 `json:"ts"`
 }
 
-type WsKlineMiddle struct {
+type WsKlinesMiddle struct {
 	WsSubscribeArg
-	Data []Kline `json:"data"`
+	Data []Klines `json:"data"`
+	Ts   int64    `json:"ts"`
 }
 
-func handleWsKline(data []byte) (*[]WsKline, error) {
-	wsKlineMiddle := &WsKlineMiddle{}
-	err := json.Unmarshal(data, wsKlineMiddle)
+func handleWsKlines(data []byte) (*[]WsKline, error) {
+	wsKlinesMiddle := &WsKlinesMiddle{}
+	err := json.Unmarshal(data, wsKlinesMiddle)
 	if err != nil {
 		return nil, err
 	}
 
 	wsKlines := []WsKline{}
-	for _, kline := range wsKlineMiddle.Data {
+	for _, kline := range wsKlinesMiddle.Data {
 		wsKlines = append(wsKlines, WsKline{
-			WsSubscribeArg: wsKlineMiddle.WsSubscribeArg,
-			Kline:          kline,
+			WsSubscribeArg: wsKlinesMiddle.WsSubscribeArg,
+			Klines:         kline,
+			Ts:             wsKlinesMiddle.Ts,
 		})
 	}
 	return &wsKlines, nil
@@ -82,11 +104,13 @@ type WsDepth struct {
 	Bids         []Books `json:"bids"`
 	PreUpdateId  string  `json:"preUpdateId"`
 	LastUpdateId string  `json:"lastUpdateId"`
+	Ts           int64   `json:"ts"`
 }
 
 type WsDepthMiddle struct {
 	WsSubscribeArg
 	Data []Depth `json:"data"`
+	Ts   int64   `json:"ts"`
 }
 
 func handleWsDepth(data []byte) (*[]WsDepth, error) {
@@ -119,6 +143,7 @@ func handleWsDepth(data []byte) (*[]WsDepth, error) {
 			Bids:           bids,
 			PreUpdateId:    depth.PreUpdateId,
 			LastUpdateId:   depth.LastUpdateId,
+			Ts:             wsDepthMiddle.Ts,
 		})
 	}
 
@@ -140,11 +165,13 @@ type WsDepthLevels struct {
 	Bids         []Books `json:"bids"`
 	LastUpdateId string  `json:"lastUpdateId"`
 	Group        string  `json:"group"`
+	Ts           int64   `json:"ts"`
 }
 
 type WsDepthLevelsMiddle struct {
 	WsSubscribeArg
 	Data []DepthLevels `json:"data"`
+	Ts   int64         `json:"ts"`
 }
 
 func handleWsDepthLevels(data []byte) (*[]WsDepthLevels, error) {
@@ -188,6 +215,7 @@ func handleWsDepthLevels(data []byte) (*[]WsDepthLevels, error) {
 			Bids:           bids,
 			LastUpdateId:   depthLevels.LastUpdateId,
 			Group:          depthLevels.Group,
+			Ts:             wsDepthLevelsMiddle.Ts,
 		})
 	}
 	return &wsDepthLevels, nil
@@ -209,11 +237,13 @@ type WsOrderbook struct {
 	Bids         []Books `json:"bids"`
 	PreUpdateId  string  `json:"preUpdateId"`
 	LastUpdateId string  `json:"lastUpdateId"`
+	Ts           int64   `json:"ts"`
 }
 
 type WsOrderbookMiddle struct {
 	WsSubscribeArg
 	Data []OrderBook `json:"data"`
+	Ts   int64       `json:"ts"`
 }
 
 func handleWsOrderbook(data []byte) (*[]WsOrderbook, error) {
@@ -246,6 +276,7 @@ func handleWsOrderbook(data []byte) (*[]WsOrderbook, error) {
 			Bids:           bids,
 			PreUpdateId:    orderbook.PreUpdateId,
 			LastUpdateId:   orderbook.LastUpdateId,
+			Ts:             wsOrderbookMiddle.Ts,
 		})
 	}
 	return &wsOrderbooks, nil
@@ -263,11 +294,13 @@ type Trade struct {
 type WsTrade struct {
 	WsSubscribeArg
 	Trade
+	Ts int64 `json:"ts"`
 }
 
 type WsTradeMiddle struct {
 	WsSubscribeArg
 	Data []Trade `json:"data"`
+	Ts   int64   `json:"ts"`
 }
 
 func handleWsTrade(data []byte) (*[]WsTrade, error) {
@@ -282,6 +315,7 @@ func handleWsTrade(data []byte) (*[]WsTrade, error) {
 		wsTrades = append(wsTrades, WsTrade{
 			WsSubscribeArg: wsTradeMiddle.WsSubscribeArg,
 			Trade:          trade,
+			Ts:             wsTradeMiddle.Ts,
 		})
 	}
 	return &wsTrades, nil
