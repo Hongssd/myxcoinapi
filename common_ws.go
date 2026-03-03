@@ -187,8 +187,10 @@ type WsSubscribeArg struct {
 
 // 登陆及订阅返回结果
 type WsSubscribeResult struct {
-	Event string `json:"event"` // Event type, e.g. subscribe, unsubscribe
-	Data  []struct {
+	Event   string `json:"event"` // Event type, e.g. subscribe, unsubscribe
+	Code    int    `json:"code,omitempty"`
+	Message string `json:"message,omitempty"`
+	Data    []struct {
 		Code    int    `json:"code"` // API 返回数字，如 0 表示成功
 		Message string `json:"message"`
 		WsSubscribeArg
@@ -566,6 +568,10 @@ func (sub *Subscription[T]) CloseChan() chan struct{} {
 
 func (ws *WsStreamClient) sendSubscribeResultToChan(result *WsSubscribeResult) {
 	if ws.waitSubResult != nil {
+		if result.Event == "error" || result.Code != 0 {
+			ws.waitSubResult.errChan <- fmt.Errorf("errHandler: %+v", result)
+			return
+		}
 		flag := false
 		for _, data := range result.Data {
 			if data.Code != 0 {
