@@ -3,7 +3,8 @@ package myxcoinapi
 // GET Get Server Time.
 func (client *PublicRestClient) NewPublicRestMarketTime() *PublicRestMarketTimeAPI {
 	return &PublicRestMarketTimeAPI{
-		req: &PublicRestMarketTimeReq{},
+		client: client,
+		req:    &PublicRestMarketTimeReq{},
 	}
 }
 
