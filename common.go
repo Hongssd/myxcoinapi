@@ -124,7 +124,7 @@ func xcoinCallAPI[T any](client *Client, url url.URL, reqBody []byte, method str
 	if err != nil {
 		return nil, err
 	}
-	return res, res.handlerError()
+	return res, nil
 }
 
 // 通用鉴权接口调用
@@ -165,7 +165,7 @@ func xcoinCallApiWithSecret[T any](client *Client, url url.URL, reqBody []byte, 
 	if err != nil {
 		return nil, err
 	}
-	return res, res.handlerError()
+	return res, nil
 }
 
 // URL标准封装 带路径参数

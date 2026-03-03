@@ -26,7 +26,7 @@ func handlerCommonRest[T any](data []byte) (*XcoinRestRes[T], error) {
 		log.Error("rest返回值获取失败: ", err)
 		return nil, err
 	}
-	return nil, res.handlerError()
+	return res, res.handlerError()
 }
 
 func (err *XcoinErrRes) handlerError() error {
