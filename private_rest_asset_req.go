@@ -115,3 +115,60 @@ func (api *PrivateRestAssetTransferAPI) ToAccountType(toAccountType string) *Pri
 	api.req.ToAccountType = GetPointer(toAccountType)
 	return api
 }
+
+type PrivateRestAssetTransferHistoryAPI struct {
+	client *PrivateRestClient
+	req    *PrivateRestAssetTransferHistoryReq
+}
+
+type PrivateRestAssetTransferHistoryReq struct {
+	AccountName *string `json:"accountName"` // false 账户名称 账户级APIKEY时，此字段为空；成员级APIKEY时，此字段必填
+	Currency    *string `json:"currency"`    // false 币种，如 BTC
+	BeginTime   *string `json:"beginTime"`   // false 筛选划转创建的开始时间戳 Unix时间戳的毫秒数格式，如 1732158178000
+	EndTime     *string `json:"endTime"`     // false 筛选划转创建的结束时间戳 Unix时间戳的毫秒数格式，如 1732182494000
+	BeginId     *string `json:"beginId"`     // false 请求此ID之后的分页内容，传的值对应接口的id字段
+	EndId       *string `json:"endId"`       // false 请求此ID之前的分页内容，传的值对应接口的id字段
+	Limit       *string `json:"limit"`       // false 分页返回的结果集数量 最大为100，不填默认返回100条
+}
+
+// string false 账户名称 账户级APIKEY时，此字段为空；成员级APIKEY时，此字段必填
+func (api *PrivateRestAssetTransferHistoryAPI) AccountName(accountName string) *PrivateRestAssetTransferHistoryAPI {
+	api.req.AccountName = GetPointer(accountName)
+	return api
+}
+
+// string false 币种，如 BTC
+func (api *PrivateRestAssetTransferHistoryAPI) Currency(currency string) *PrivateRestAssetTransferHistoryAPI {
+	api.req.Currency = GetPointer(currency)
+	return api
+}
+
+// string false 筛选划转创建的开始时间戳 Unix时间戳的毫秒数格式，如 1732158178000
+func (api *PrivateRestAssetTransferHistoryAPI) BeginTime(beginTime string) *PrivateRestAssetTransferHistoryAPI {
+	api.req.BeginTime = GetPointer(beginTime)
+	return api
+}
+
+// string false 筛选划转创建的结束时间戳 Unix时间戳的毫秒数格式，如 1732182494000
+func (api *PrivateRestAssetTransferHistoryAPI) EndTime(endTime string) *PrivateRestAssetTransferHistoryAPI {
+	api.req.EndTime = GetPointer(endTime)
+	return api
+}
+
+// string false 请求此ID之后的分页内容，传的值对应接口的id字段
+func (api *PrivateRestAssetTransferHistoryAPI) BeginId(beginId string) *PrivateRestAssetTransferHistoryAPI {
+	api.req.BeginId = GetPointer(beginId)
+	return api
+}
+
+// string false 请求此ID之前的分页内容，传的值对应接口的id字段
+func (api *PrivateRestAssetTransferHistoryAPI) EndId(endId string) *PrivateRestAssetTransferHistoryAPI {
+	api.req.EndId = GetPointer(endId)
+	return api
+}
+
+// string false 分页返回的结果集数量 最大为100，不填默认返回100条
+func (api *PrivateRestAssetTransferHistoryAPI) Limit(limit string) *PrivateRestAssetTransferHistoryAPI {
+	api.req.Limit = GetPointer(limit)
+	return api
+}

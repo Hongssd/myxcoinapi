@@ -42,3 +42,20 @@ type PrivateRestAssetBalancesResRow struct {
 type PrivateRestAssetBalancesRes []PrivateRestAssetBalancesResRow
 
 type PrivateRestAssetTransferRes bool
+
+type PrivateRestAssetTransferHistoryResRow struct {
+	Id               string `json:"id"`               // 数据唯一ID
+	ClientTransferId string `json:"clientTransferId"` // 客户划转单ID
+	FromAccountType  string `json:"fromAccountType"`  // 转出账户，如 funding
+	ToAccountType    string `json:"toAccountType"`    // 转入账户，如 trading
+	Amount           string `json:"amount"`           // 划转金额
+	Currency         string `json:"currency"`         // 币种，如 BTC
+	TransferType     string `json:"transferType"`     // 转换类型，如 account
+	Status           string `json:"status"`           // 划转状态
+	AccountName      string `json:"accountName"`      // 账户名称
+	Pid              string `json:"pid"`              // 账户唯一ID
+	Uid              string `json:"uid"`              // 操作员唯一ID
+	Cid              string `json:"cid"`              // 操作主体唯一ID
+	CreateTime       string `json:"createTime"`       // 划转时间 Unix时间戳的毫秒数格式，如 1732182494000
+}
+type PrivateRestAssetTransferHistoryRes []PrivateRestAssetTransferHistoryResRow

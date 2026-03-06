@@ -25,10 +25,11 @@ const (
 	PrivateRestAccountAvailableBalance // GET		获取交易账户可用余额 		 			查询交易账户指定币种的可用余额
 
 	// Asset
-	PrivateRestAssetAccountInfo    // GET 	获取账户配置信息 		该接口可以查询账户保证金模式，账户状态等信息
-	PrivateRestAssetBalances       // GET 	获取资金账户余额		该接口可以查询资金账户余额信息
-	PrivateRestAssetDepositAddress // GET 	获取充值地址				仅支持有充值权限用户进行调用
-	PrivateRestAssetTransfer       // POST 	账户内划转申请			账户内账户类型间划转，不支持跨账户划转，额度受权限配置控制
+	PrivateRestAssetAccountInfo     // GET 	获取账户配置信息 		该接口可以查询账户保证金模式，账户状态等信息
+	PrivateRestAssetBalances        // GET 	获取资金账户余额		该接口可以查询资金账户余额信息
+	PrivateRestAssetDepositAddress  // GET 	获取充值地址				仅支持有充值权限用户进行调用
+	PrivateRestAssetTransfer        // POST 账户内划转申请			账户内账户类型间划转，不支持跨账户划转，额度受权限配置控制
+	PrivateRestAssetTransferHistory // GET 	获取账户内划转记录	获取最近三个月资金划转记录，返回数据按照划转创建时间倒序排序
 )
 
 var PrivateRestAPIMap = map[PrivateRestAPI]string{
@@ -54,8 +55,9 @@ var PrivateRestAPIMap = map[PrivateRestAPI]string{
 	PrivateRestAccountAvailableBalance: "/v1/account/availableBalance", // GET		获取交易账户可用余额 		 查询交易账户指定币种的可用余额
 
 	// Asset
-	PrivateRestAssetAccountInfo:    "/v1/asset/account/info",    // GET 	获取账户配置信息 		该接口可以查询账户保证金模式，账户状态等信息
-	PrivateRestAssetBalances:       "/v1/asset/balances",        // GET 	获取资金账户余额		该接口可以查询资金账户余额信息
-	PrivateRestAssetDepositAddress: "/v1/asset/deposit/address", // GET 	获取充值地址				仅支持有充值权限用户进行调用
-	PrivateRestAssetTransfer:       "/v1/asset/transfer",        // POST 	账户内划转申请			账户内账户类型间划转，不支持跨账户划转，额度受权限配置控制
+	PrivateRestAssetAccountInfo:     "/v1/asset/account/info",     // GET 	获取账户配置信息 		该接口可以查询账户保证金模式，账户状态等信息
+	PrivateRestAssetBalances:        "/v1/asset/balances",         // GET 	获取资金账户余额		该接口可以查询资金账户余额信息
+	PrivateRestAssetDepositAddress:  "/v1/asset/deposit/address",  // GET 	获取充值地址				仅支持有充值权限用户进行调用
+	PrivateRestAssetTransfer:        "/v1/asset/transfer",         // POST 	账户内划转申请			账户内账户类型间划转，不支持跨账户划转，额度受权限配置控制
+	PrivateRestAssetTransferHistory: "/v1/asset/transfer/history", // GET 	获取账户内划转记录	获取最近三个月资金划转记录，返回数据按照划转创建时间倒序排序
 }

@@ -365,6 +365,7 @@ type PrivateRestTradeHistoryOrdersReq struct {
 	AccountName  *string `json:"accountName"`  // false 账户名称 账户级APIKEY时，此字段为空；成员级APIKEY时，此字段必填
 	BusinessType *string `json:"businessType"` // false 业务线 spot表示现货/现货杠杆，linear_perpetual表示U本位永续，linear_futures表示交割合约
 	Symbol       *string `json:"symbol"`       // false 交易对名称 如 BTC-USDT（现货）、BTC-USDT-PERP（永续）、BTC-USDT-26DEC25（交割）等
+	OrderType    *string `json:"orderType"`    // false 订单类型 market：市价单，limit：限价单，post_only：只挂单
 	OrderFilter  *string `json:"orderFilter"`  // false 订单品种 order：普通订单，默认值；oco：止盈止损单
 	BeginTime    *string `json:"beginTime"`    // false 筛选订单创建的开始时间戳，Unix时间戳的毫秒数格式，如 1732158178000
 	EndTime      *string `json:"endTime"`      // false 筛选订单创建的结束时间戳，Unix时间戳的毫秒数格式，如 1732182494000
@@ -389,6 +390,12 @@ func (api *PrivateRestTradeHistoryOrdersAPI) BusinessType(businessType string) *
 // string false 交易对名称 如 BTC-USDT（现货）、BTC-USDT-PERP（永续）、BTC-USDT-26DEC25（交割）等
 func (api *PrivateRestTradeHistoryOrdersAPI) Symbol(symbol string) *PrivateRestTradeHistoryOrdersAPI {
 	api.req.Symbol = GetPointer(symbol)
+	return api
+}
+
+// string false 订单类型 market：市价单，limit：限价单，post_only：只挂单
+func (api *PrivateRestTradeHistoryOrdersAPI) OrderType(orderType string) *PrivateRestTradeHistoryOrdersAPI {
+	api.req.OrderType = GetPointer(orderType)
 	return api
 }
 
