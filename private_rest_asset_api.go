@@ -55,3 +55,16 @@ func (api *PrivateRestAssetTransferAPI) Do() (*XcoinRestRes[PrivateRestAssetTran
 	}
 	return xcoinCallApiWithSecret[PrivateRestAssetTransferRes](api.client.c, url, body, POST)
 }
+
+// GET 获取账户内划转记录 获取最近三个月资金划转记录，返回数据按照划转创建时间倒序排序
+func (client *PrivateRestClient) NewPrivateRestAssetTransferHistory() *PrivateRestAssetTransferHistoryAPI {
+	return &PrivateRestAssetTransferHistoryAPI{
+		client: client,
+		req:    &PrivateRestAssetTransferHistoryReq{},
+	}
+}
+
+func (api *PrivateRestAssetTransferHistoryAPI) Do() (*XcoinRestRes[PrivateRestAssetTransferHistoryRes], error) {
+	url := xcoinHandlerRequestAPIWithPathQueryParam(REST, api.req, PrivateRestAPIMap[PrivateRestAssetTransferHistory])
+	return xcoinCallApiWithSecret[PrivateRestAssetTransferHistoryRes](api.client.c, url, NIL_REQBODY, GET)
+}

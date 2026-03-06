@@ -5,13 +5,28 @@ type PrivateRestTradeOrderRes struct {
 	ClientOrderId string `json:"clientOrderId"`
 }
 
-type PrivateRestTradeBatchOrderRes []PrivateRestTradeOrderRes
+type PrivateRestTradeBatchOrderResRow struct {
+	Code          string `json:"code"`
+	Msg           string `json:"msg"`
+	OrderId       string `json:"orderId"`
+	ClientOrderId string `json:"clientOrderId"`
+	Ts            string `json:"ts"`
+}
+
+type PrivateRestTradeBatchOrderRes []PrivateRestTradeBatchOrderResRow
 
 type PrivateRestTradeCancelOrderRes struct {
 	OrderId string `json:"orderId"`
 }
 
-type PrivateRestTradeBatchCancelOrderRes []PrivateRestTradeCancelOrderRes
+type PrivateRestTradeBatchCancelOrderResRow struct {
+	Code    int64  `json:"code"`
+	Msg     string `json:"msg"`
+	OrderId string `json:"orderId"`
+	Ts      string `json:"ts"`
+}
+
+type PrivateRestTradeBatchCancelOrderRes []PrivateRestTradeBatchCancelOrderResRow
 
 type PrivateRestTradeCancelAllOrderRes string
 
