@@ -20,9 +20,16 @@ type XcoinRestRes[T any] struct {
 }
 
 func handlerCommonRest[T any](data []byte) (*XcoinRestRes[T], error) {
+	errRes := &XcoinErrRes{}
+	if err := json.Unmarshal(data, errRes); err != nil {
+		log.Error("rest返回值获取失败: ", err)
+		return nil, err
+	}
+	if errRes.Code != "0" {
+		return nil, fmt.Errorf("request error:[code:%v][message:%v]", errRes.Code, errRes.Msg)
+	}
 	res := &XcoinRestRes[T]{}
 	if err := json.Unmarshal(data, res); err != nil {
-		log.Error(string(data))
 		log.Error("rest返回值获取失败: ", err)
 		return nil, err
 	}
