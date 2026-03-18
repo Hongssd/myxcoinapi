@@ -336,9 +336,11 @@ func (ws *WsStreamClient) Close() error {
 	ws.isClose = true
 	ws.connId = ""
 
-	err := ws.conn.Close()
-	if err != nil {
-		return err
+	if ws.conn != nil {
+		err := ws.conn.Close()
+		if err != nil {
+			return err
+		}
 	}
 	//手动关闭成功，给所有订阅发送关闭信号
 	ws.sendWsCloseToAllSub()
@@ -478,17 +480,20 @@ func subscribe[T any](ws *WsStreamClient, args []WsSubscribeArg, event string) (
 
 	data, err := json.Marshal(subscribeReq)
 	if err != nil {
+		ws.waitSubResultMu.Unlock()
 		return nil, err
 	}
 	log.Debugf("send msg: %s", string(data))
 
 	err = ws.conn.WriteMessage(websocket.TextMessage, data)
 	if err != nil {
+		ws.waitSubResultMu.Unlock()
 		return nil, err
 	}
 
 	node, err := snowflake.NewNode(2)
 	if err != nil {
+		ws.waitSubResultMu.Unlock()
 		return nil, err
 	}
 
@@ -541,10 +546,12 @@ func (ws *WsStreamClient) reSubscribeForReconnect() error {
 }
 
 func (ws *WsStreamClient) DeferSub() {
-	if len(ws.waitSubResult.subResultMap) == len(ws.waitSubResult.Args) {
-		for _, arg := range ws.waitSubResult.Args {
-			keyData, _ := json.Marshal(&arg)
-			ws.commonSubMap.Store(string(keyData), ws.waitSubResult)
+	if ws.waitSubResult != nil {
+		if len(ws.waitSubResult.subResultMap) == len(ws.waitSubResult.Args) {
+			for _, arg := range ws.waitSubResult.Args {
+				keyData, _ := json.Marshal(&arg)
+				ws.commonSubMap.Store(string(keyData), ws.waitSubResult)
+			}
 		}
 		ws.waitSubResult = nil
 		ws.waitSubResultMu.Unlock()
