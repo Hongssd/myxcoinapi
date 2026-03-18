@@ -1,6 +1,8 @@
 package myxcoinapi
 
-import "strings"
+import (
+	"strings"
+)
 
 type Ticker24hr struct {
 	Symbol             string `json:"symbol"`             // Trading pair name, e.g., BTC-USDT(spot), BTC-USDT-PERP(perpetual), BTC-USDT-26DEC25(futures)
@@ -294,13 +296,13 @@ type Trade struct {
 type WsTrade struct {
 	WsSubscribeArg
 	Trade
-	Ts int64 `json:"ts"`
+	Ts string `json:"ts"`
 }
 
 type WsTradeMiddle struct {
 	WsSubscribeArg
 	Data []Trade `json:"data"`
-	Ts   int64   `json:"ts"`
+	Ts   string  `json:"ts"`
 }
 
 func handleWsTrade(data []byte) (*[]WsTrade, error) {
