@@ -723,6 +723,11 @@ func (ws *WsStreamClient) handleResult(resultChan chan []byte, errChan chan erro
 				// ticker24hr订阅结果处理
 				if strings.Contains(string(data), "ticker24hr") {
 					t, err := handleWsTicker24hr(data)
+					if t == nil {
+						log.Error(err)
+						log.Error("ticker24hr data is nil")
+						continue
+					}
 					arg := t.WsSubscribeArg
 					keyData, _ := json.Marshal(WsSubscribeArg{
 						Stream:       arg.Stream,
@@ -743,6 +748,11 @@ func (ws *WsStreamClient) handleResult(resultChan chan []byte, errChan chan erro
 				// kline订阅结果处理
 				if strings.Contains(string(data), "kline#") {
 					k, err := handleWsKlines(data)
+					if k == nil {
+						log.Error(err)
+						log.Error("kline data is nil")
+						continue
+					}
 					if len(*k) == 0 {
 						log.Warnf("kline is empty, skip")
 						continue
@@ -769,6 +779,11 @@ func (ws *WsStreamClient) handleResult(resultChan chan []byte, errChan chan erro
 				// depth订阅结果处理
 				if strings.Contains(string(data), "depth#") {
 					d, err := handleWsDepth(data)
+					if d == nil {
+						log.Error(err)
+						log.Error("depth data is nil")
+						continue
+					}
 					if len(*d) == 0 {
 						log.Warnf("depth is empty, skip")
 						continue
@@ -794,6 +809,11 @@ func (ws *WsStreamClient) handleResult(resultChan chan []byte, errChan chan erro
 				// depthLevels订阅结果处理
 				if strings.Contains(string(data), "depthlevels#") {
 					d, err := handleWsDepthLevels(data)
+					if d == nil {
+						log.Error(err)
+						log.Error("depthLevels data is nil")
+						continue
+					}
 					if len(*d) == 0 {
 						log.Warnf("depthLevels is empty, skip")
 						continue
@@ -819,6 +839,11 @@ func (ws *WsStreamClient) handleResult(resultChan chan []byte, errChan chan erro
 				// orderbook订阅结果处理
 				if strings.Contains(string(data), "orderBook") {
 					o, err := handleWsOrderbook(data)
+					if o == nil {
+						log.Error(err)
+						log.Error("orderBook data is nil")
+						continue
+					}
 					if len(*o) == 0 {
 						log.Warnf("orderBook is empty, skip")
 						continue
@@ -844,6 +869,11 @@ func (ws *WsStreamClient) handleResult(resultChan chan []byte, errChan chan erro
 				// trade订阅结果处理
 				if strings.Contains(string(data), "trade") {
 					t, err := handleWsTrade(data)
+					if t == nil {
+						log.Error(err)
+						log.Error("trade data is nil")
+						continue
+					}
 					if len(*t) == 0 {
 						log.Warnf("trade is empty, skip")
 						continue
@@ -871,6 +901,11 @@ func (ws *WsStreamClient) handleResult(resultChan chan []byte, errChan chan erro
 				// position订阅结果处理
 				if strings.Contains(string(data), "position") {
 					p, err := handleWsPosition(data)
+					if p == nil {
+						log.Error(err)
+						log.Error("position data is nil")
+						continue
+					}
 					if len(*p) == 0 {
 						log.Warnf("position is empty, skip")
 						continue
@@ -895,6 +930,11 @@ func (ws *WsStreamClient) handleResult(resultChan chan []byte, errChan chan erro
 				// order订阅结果处理
 				if strings.Contains(string(data), "order") {
 					o, err := handleWsOrder(data)
+					if o == nil {
+						log.Error(err)
+						log.Error("order data is nil")
+						continue
+					}
 					if len(*o) == 0 {
 						log.Warnf("order is empty, skip")
 						continue
@@ -919,6 +959,11 @@ func (ws *WsStreamClient) handleResult(resultChan chan []byte, errChan chan erro
 				//tradingAccount订阅结果处理
 				if strings.Contains(string(data), "trading_account") {
 					t, err := handleWsTradingAccount(data)
+					if t == nil {
+						log.Error(err)
+						log.Error("tradingAccount data is nil")
+						continue
+					}
 					if len(*t) == 0 {
 						log.Warnf("tradingAccount is empty, skip")
 						continue
