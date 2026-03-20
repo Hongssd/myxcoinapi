@@ -296,13 +296,13 @@ type Trade struct {
 type WsTrade struct {
 	WsSubscribeArg
 	Trade
-	Ts string `json:"ts"`
+	Ts int64 `json:"ts"`
 }
 
 type WsTradeMiddle struct {
 	WsSubscribeArg
 	Data []Trade `json:"data"`
-	Ts   string  `json:"ts"`
+	Ts   int64   `json:"ts"`
 }
 
 func handleWsTrade(data []byte) (*[]WsTrade, error) {
