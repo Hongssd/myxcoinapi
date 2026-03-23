@@ -721,7 +721,7 @@ func (ws *WsStreamClient) handleResult(resultChan chan []byte, errChan chan erro
 				}
 
 				// ticker24hr订阅结果处理
-				if strings.Contains(string(data), "ticker24hr") {
+				if strings.Contains(string(data), "\"stream\":\"ticker24hr\"") {
 					t, err := handleWsTicker24hr(data)
 					if t == nil {
 						log.Error(err)
@@ -746,7 +746,7 @@ func (ws *WsStreamClient) handleResult(resultChan chan []byte, errChan chan erro
 				}
 
 				// kline订阅结果处理
-				if strings.Contains(string(data), "kline#") {
+				if strings.Contains(string(data), "\"stream\":\"kline#") {
 					k, err := handleWsKlines(data)
 					if k == nil {
 						log.Error(err)
@@ -777,7 +777,7 @@ func (ws *WsStreamClient) handleResult(resultChan chan []byte, errChan chan erro
 				}
 
 				// depth订阅结果处理
-				if strings.Contains(string(data), "depth#") {
+				if strings.Contains(string(data), "\"stream\":\"depth#") {
 					d, err := handleWsDepth(data)
 					if d == nil {
 						log.Error(err)
@@ -807,7 +807,7 @@ func (ws *WsStreamClient) handleResult(resultChan chan []byte, errChan chan erro
 				}
 
 				// depthLevels订阅结果处理
-				if strings.Contains(string(data), "depthlevels#") {
+				if strings.Contains(string(data), "\"stream\":\"depthlevels#") {
 					d, err := handleWsDepthLevels(data)
 					if d == nil {
 						log.Error(err)
@@ -837,7 +837,7 @@ func (ws *WsStreamClient) handleResult(resultChan chan []byte, errChan chan erro
 				}
 
 				// orderbook订阅结果处理
-				if strings.Contains(string(data), "orderBook") {
+				if strings.Contains(string(data), "\"stream\":\"orderBook\"") {
 					o, err := handleWsOrderbook(data)
 					if o == nil {
 						log.Error(err)
@@ -867,7 +867,7 @@ func (ws *WsStreamClient) handleResult(resultChan chan []byte, errChan chan erro
 				}
 
 				// trade订阅结果处理
-				if strings.Contains(string(data), "trade") {
+				if strings.Contains(string(data), "\"stream\":\"trade\"") {
 					t, err := handleWsTrade(data)
 					if t == nil {
 						log.Error(err)
@@ -928,7 +928,7 @@ func (ws *WsStreamClient) handleResult(resultChan chan []byte, errChan chan erro
 				}
 
 				// order订阅结果处理
-				if strings.Contains(string(data), "order") {
+				if strings.Contains(string(data), "\"stream\":\"order\"") {
 					o, err := handleWsOrder(data)
 					if o == nil {
 						log.Error(err)

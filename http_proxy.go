@@ -66,8 +66,8 @@ func isUseProxy() bool {
 
 func init() {
 	c := cron.New(cron.WithSeconds())
-	//每3秒权重清零，状态恢复
-	_, err := c.AddFunc("*/3 * * * * *", func() {
+	//每5秒权重清零，状态恢复
+	_, err := c.AddFunc("*/5 * * * * *", func() {
 		for _, proxy := range proxyList {
 			proxy.Weight.restore()
 		}
@@ -182,6 +182,11 @@ func RequestWithHeader(urlStr string, reqBody []byte, method string, headerMap m
 			currentProxyWeight.IsLimited = true
 			return data, errors.New("proxy ip is limited")
 		}
+		if isProxyLimited(data) {
+			currentProxyWeight.RemainWeight = 0
+			currentProxyWeight.IsLimited = true
+			return data, errors.New("request rate too high")
+		}
 		//回填权重
 		if resp.Header.Get("X-Gate-RateLimit-Requests-Remain") != "" {
 			remainWeight, err := strconv.Atoi(resp.Header.Get("X-Gate-RateLimit-Requests-Remain"))
@@ -199,4 +204,12 @@ func RequestWithHeader(urlStr string, reqBody []byte, method string, headerMap m
 		}
 	}
 	return data, err
+}
+
+func isProxyLimited(data []byte) bool {
+	res := &XcoinErrRes{}
+	if err := json.Unmarshal(data, res); err != nil {
+		return false
+	}
+	return res.Code == "10005"
 }
